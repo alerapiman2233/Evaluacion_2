@@ -35,15 +35,15 @@ def obtener_ruta(origen, destino):
     response = requests.get(BASE_URL, params=params)
     if response.status_code != 200:
         print(f"Error al obtener la ruta: {response.status_code}")
-        print(response.text)  # <-- útil para depurar
+        print(response.text)  
         return None
 
     return response.json()
 
 def imprimir_instrucciones(ruta):
-    path = ruta["paths"][0]  # primer recorrido
-    distancia_total = path["distance"] / 1000  # ✅ corregido: metros → km
-    tiempo_total = path["time"] / 60000  # ✅ corregido: milisegundos → minutos
+    path = ruta["paths"][0]  
+    distancia_total = path["distance"] / 1000  
+    tiempo_total = path["time"] / 60000  
 
     print("\n=== Resumen del viaje ===")
     print(f"Distancia total: {distancia_total:.1f} km")
