@@ -1,71 +1,3 @@
-import os
-import requests
-from faker import Faker
-
-# Configuración
-API_KEY = os.getenv("API_KEY")  # asegúrate de exportar tu API_KEY en la VM
-BASE_URL = "http://library.demo.local/api/v1/books"
-
-# Si tu API usa Bearer token
-headers = {
-    "x-api-key": API_KEY,
-    "Content-Type": "application/json"
-}
-
-fake = Faker()
-
-# Crear y enviar 50 libros aleatorios
-for i in range(50):
-    libro = {
-        "id": 8 + i,  # id único para evitar duplicados
-        "title": fake.sentence(nb_words=4),
-        "author": fake.name(),
-        "isbn": fake.isbn10(separator="")
-    }
-    response = requests.post(BASE_URL, json=libro, headers=headers)
-    if response.status_code in (200, 201):
-        print(f"✅ Libro {i+1} agregado correctamente")
-    else:
-        print(f"❌ Error al agregar libro {i+1}: {response.status_code} -> {response.text}")
-
-# Listar todos los libros, ordenados por autor, incluyendo ISBN
-
-print("\n📚 Listando todos los libros ordenados por autor...")
-
-all_books = []
-limit = 50
-offset = 0
-
-while True:
-    params = {
-        "includeISBN": "true",
-        "limit": limit,
-        "offset": offset,
-        "sort": "author"  # Cambia si tu API usa otro parámetro para ordenar
-    }
-
-    resp = requests.get("http://library.demo.local/api/v1/books?includeISBN=true", params=params)
-
-    if resp.status_code != 200:
-        print("❌ Error al listar libros:", resp.status_code)
-        print("Respuesta:", resp.text)
-        break
-
-    books = resp.json()
-    if not books:
-        break
-
-    all_books.extend(books)
-    offset += limit
-
-# Mostrar libros
-print(f"\n📖 Total de libros listados: {len(all_books)}")
-for libro in all_books:
-    print(f"ID: {libro.get('id')} | Autor: {libro.get('author')} | Título: {libro.get('title')} | ISBN: {libro.get('ISBN')}")
-
-
-
-
 import requests
 
 API_KEY = "3368c6a9-eb8b-4bfb-8fc1-82097d595929"
@@ -76,7 +8,6 @@ def formatear_numero(num):
     return f"{num:.2f}"
 
 def geocodificar(lugar):
-    """Convierte un nombre de lugar a coordenadas (lat,lon) usando GraphHopper."""
     params = {"q": lugar, "limit": 1, "key": API_KEY}
     response = requests.get(GEOCODE_URL, params=params)
     if response.status_code != 200:
