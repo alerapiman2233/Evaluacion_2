@@ -41,13 +41,22 @@ def obtener_ruta(origen, destino):
     return response.json()
 
 def imprimir_instrucciones(ruta):
-    print("\nInstrucciones del viaje:")
-    for leg in ruta["paths"]:
-        for instr in leg["instructions"]:
-            texto = instr["text"]
-            distancia = formatear_numero(instr["distance"] / 1000)  # km
-            tiempo = formatear_numero(instr["time"] / 60000)  # minutos
-            print(f"- {texto} (Distancia: {distancia} km, Tiempo: {tiempo} min)")
+    path = ruta["paths"][0]  # primer recorrido
+    distancia_total = path["distance"] / 1000  # ✅ corregido: metros → km
+    tiempo_total = path["time"] / 60000  # ✅ corregido: milisegundos → minutos
+
+    print("\n=== Resumen del viaje ===")
+    print(f"Distancia total: {distancia_total:.1f} km")
+    print(f"Tiempo estimado: {tiempo_total:.0f} min")
+
+    print("\n=== Instrucciones del viaje ===")
+    for instr in path["instructions"]:
+        texto = instr["text"]
+        distancia = instr["distance"] / 1000  # km
+        # Convertir milisegundos a minutos y segundos
+        minutos = int(instr["time"] / 60000)
+        segundos = int((instr["time"] % 60000) / 1000)
+        print(f"- {texto} (Distancia: {distancia:.2f} km, Tiempo: {minutos} min {segundos} s)")
 
 def main():
     print("=== Software de Geolocalización con GraphHopper ===")
